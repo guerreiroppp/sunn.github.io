@@ -89,13 +89,14 @@
 
     <script>
         const discordUserId = '1175498877026189527';
+        const botToken = 'MTI0OTg3MDc2NzIzNjE5MDIwOQ.Ge2SbI.bkUyWGoY2AHtk3KvVpqGnKlouLsVM83zhAxqq8';
         const profileImg = document.getElementById('profile-img');
 
         async function fetchDiscordProfile() {
             try {
                 const response = await fetch(`https://discord.com/api/users/${discordUserId}`, {
                     headers: {
-                        'Authorization': `Bot YOUR_BOT_TOKEN`
+                        'Authorization': `Bot ${botToken}`
                     }
                 });
 
