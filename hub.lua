@@ -16,7 +16,7 @@ local aimKey  = Enum.KeyCode.E
 local aimAssistLevel = 0.3 
 local maxDistance = 100 
 local smoothness = 0.2
-local TEAM_IGNORE = true
+local TEAM_IGNORE = false
 
 -- AIMBOT FUNCTIONS --
 
@@ -120,6 +120,22 @@ local ENABLE_AIMBOT = TAB_AIMBOT_CONFIG:CreateToggle({
 		else
 			aimbotEnabled = false
 			ArrayField:Notify({Title = "Aimbot desativado!", Content = "O aimbot está completamente desativado."})
+
+		end
+	end,
+ })
+
+ local TEAM_IG = TAB_AIMBOT_CONFIG:CreateToggle({
+	Name = "Team Ignore",
+	CurrentValue = false,
+	Flag = "TIME_IGNORADO",
+	Callback = function(Value)
+		if Value == true then
+			TEAM_IGNORE = true
+			ArrayField:Notify({Title = "Time sendo ignorado.", Content = ""})
+		else
+			TEAM_IGNORE = false
+			ArrayField:Notify({Title = "Time designorado!", Content = "O aimbot está completamente ativado para todos."})
 
 		end
 	end,
