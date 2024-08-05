@@ -5,6 +5,8 @@ local TitleHub = "Sun Hub"
 local ImageHub = 4483362458
 
 if game.PlaceId == 10449761463 then
+   print("Oi")
+else
    Rayfield:Notify({
       Title = TitleHub,
       Content = "Hello "..p.Name..", how are you! Ready to have fun?",
@@ -17,9 +19,6 @@ if game.PlaceId == 10449761463 then
       Duration = 3,
       Image = ImageHub,
    })
-else
-   p:Kick("Not support")
-   Rayfield:Destroy()
 end
 
 
