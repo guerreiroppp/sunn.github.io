@@ -1,4 +1,4 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Rayfield = loadstring(game:HttpGet('https://sunn.cloud/r.lua'))()
 
 local p = game:GetService('Players').LocalPlayer
 local TitleHub = "Sun Hub"
