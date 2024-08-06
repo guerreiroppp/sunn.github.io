@@ -11,8 +11,9 @@ local ImageHub = 4483362458
 
 -- AIMBOT CONFIGS VALUES --
 
+local aimbotEnabled1 = false
 local aimbotEnabled = false
-local aimKey  = Enum.KeyCode.E
+local aimKey  = "E"
 local aimAssistLevel = 0.3 
 local maxDistance = 100 
 local smoothness = 0.2
@@ -85,19 +86,21 @@ Window:Prompt({
     SubTitle = 'IMPORTANTE',
     Content = "O uso deste exploit é de sua total responsabilidade. Não nos responsabilizamos por qualquer punição, incluindo bans, que possa resultar do seu uso. Utilize por sua conta e risco.",
     Actions = {
-        Aceitar = {
-            Name = 'Aceito',
+        Recusar = {
+            Name = 'Recusar',
             Callback = function()
-                print('Termos aceitados.')
-            end,
-        },
-		Recusar = {
-			Name = 'Recusar',
-			Callback = function ()
-				print("Termos recusados.")
+                print('Termos recusados.')
 				ArrayField:Notify({Title = "Termos recusados!", Content = "O "..TitleHub.. " está fechando..."})
 				task.wait(2)
 				ArrayField:Destroy()
+            end,
+        },
+		Aceitar = {
+			Name = 'Aceitar',
+			Callback = function ()
+				print("Termos recusados.")
+				ArrayField:Notify({Title = "Termos aceitos!", Content = LocalPlayer.DisplayName.. " bom proveito!"})
+			
 			end
 		}
     }
@@ -109,21 +112,25 @@ local TAB_AIMBOT_CONFIG = Window:CreateTab("AimBot Config", ImageHub)
 local SEC_AIMBOT = TAB_AIMBOT_CONFIG:CreateSection("Aimbot",true)
 
 
+
 local ENABLE_AIMBOT = TAB_AIMBOT_CONFIG:CreateToggle({
 	Name = "Aimbot Enabled",
 	CurrentValue = false,
 	Flag = "AIM_ENABLED",
 	Callback = function(Value)
 		if Value == true then
-			aimbotEnabled = true
-			ArrayField:Notify({Title = "Aimbot ativado!", Content = "A tecla para ativar e desativar é: " ..tostring(aimKey)})
+			aimbotEnabled1 = true
+			ArrayField:Notify({Title = "AimBot ativado!", Content = "A tecla para ativar e desativar é: " ..tostring(aimKey)})
 		else
-			aimbotEnabled = false
-			ArrayField:Notify({Title = "Aimbot desativado!", Content = "O aimbot está completamente desativado."})
+			aimbotEnabled1 = false
+			ArrayField:Notify({Title = "AimBot desativado!", Content = "O AimBot está completamente desativado."})
 
 		end
 	end,
  })
+
+
+ local label_aimbot = TAB_AIMBOT_CONFIG:CreateLabel("Aimbot Configs")
 
  local TEAM_IG = TAB_AIMBOT_CONFIG:CreateToggle({
 	Name = "Team Ignore",
@@ -141,7 +148,17 @@ local ENABLE_AIMBOT = TAB_AIMBOT_CONFIG:CreateToggle({
 	end,
  })
 
- local label_aimbot = TAB_AIMBOT_CONFIG:CreateLabel("Aimbot Configs")
+ local KEY_AIMBOT = TAB_AIMBOT_CONFIG:CreateDropdown({
+	Name = "Tecla de ativação/deisativação",
+	Options = {"A","B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"},
+	CurrentOption = "E",
+	MultiSelection = false,
+	Flag = "KEY_AIMBOT",
+	Callback = function(Option)
+		aimKey = tostring(Option)
+		ArrayField:Notify({Title = "AimBot alteração!", Content = "A nova tecla de ativação/desativação é: " ..tostring(aimKey)})
+	end,
+ })
 
  local ASSISTENCIA_AIM = TAB_AIMBOT_CONFIG:CreateSlider({
 	Name = "AimLevel",
@@ -179,7 +196,7 @@ local ENABLE_AIMBOT = TAB_AIMBOT_CONFIG:CreateToggle({
 	Name = "Smoothness",
 	Range = {0, 1},
 	Increment = 0.1,
-	Suffix = "",
+	Suffix = "(Quanto mais baixo mais suave)",
 	CurrentValue = 0.2,
 	Flag = "SMOOTH_AIM",
 	Callback = function(Value)
@@ -192,16 +209,21 @@ local ENABLE_AIMBOT = TAB_AIMBOT_CONFIG:CreateToggle({
  })
 
 
- UserInputService.InputBegan:Connect(function(input)
-    if input.KeyCode == aimKey then
-        aimbotEnabled = not aimbotEnabled
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode[aimKey] then
+		if aimbotEnabled1 == false then
+			print("O aimbot está desativado.")
+			ArrayField:Notify({Title = "AimBot Desativado!", Content = "O Aimbot está desativado, por favor ative para utilizar o atalho..."})
+		else
+			aimbotEnabled = not aimbotEnabled
+		end
     end
 end)
 
 RunService.RenderStepped:Connect(function()
     if aimbotEnabled then
         local targetPlayer = getClosestVisiblePlayer()
-        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") and targetPlayer.Character.Humanoid.Health ~= 0 then
             local targetPos = targetPlayer.Character.Head.Position
             local cameraPos = Camera.CFrame.Position
             local direction = (targetPos - cameraPos).unit
