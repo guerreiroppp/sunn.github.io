@@ -14,6 +14,7 @@ local ImageHub = 4483362458
 local aimbotEnabled1 = false
 local aimbotEnabled = false
 local aimKey  = "E"
+local aimFocus = "Head"
 local aimAssistLevel = 0.3 
 local maxDistance = 100 
 local smoothness = 0.2
@@ -112,7 +113,6 @@ local TAB_AIMBOT_CONFIG = Window:CreateTab("AimBot Config", ImageHub)
 local SEC_AIMBOT = TAB_AIMBOT_CONFIG:CreateSection("Aimbot",true)
 
 
-
 local ENABLE_AIMBOT = TAB_AIMBOT_CONFIG:CreateToggle({
 	Name = "Aimbot Enabled",
 	CurrentValue = false,
@@ -156,6 +156,18 @@ local ENABLE_AIMBOT = TAB_AIMBOT_CONFIG:CreateToggle({
 	Flag = "KEY_AIMBOT",
 	Callback = function(Option)
 		aimKey = tostring(Option)
+		ArrayField:Notify({Title = "AimBot alteração!", Content = "A nova tecla de ativação/desativação é: " ..tostring(aimKey)})
+	end,
+ })
+
+ local FOCUS_AIMBOT = TAB_AIMBOT_CONFIG:CreateDropdown({
+	Name = "O AimBot focará",
+	Options = {"Head","HumanoidRootPart"},
+	CurrentOption = "Head",
+	MultiSelection = false,
+	Flag = "FOCUS_AIMBOT",
+	Callback = function(Option)
+		aimFocus = tostring(Option)
 		ArrayField:Notify({Title = "AimBot alteração!", Content = "A nova tecla de ativação/desativação é: " ..tostring(aimKey)})
 	end,
  })
@@ -223,8 +235,8 @@ end)
 RunService.RenderStepped:Connect(function()
     if aimbotEnabled then
         local targetPlayer = getClosestVisiblePlayer()
-        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") and targetPlayer.Character.Humanoid.Health ~= 0 then
-            local targetPos = targetPlayer.Character.Head.Position
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild(aimFocus) and targetPlayer.Character.Humanoid.Health ~= 0 then
+            local targetPos = targetPlayer.Character[aimFocus].Position
             local cameraPos = Camera.CFrame.Position
             local direction = (targetPos - cameraPos).unit
 
