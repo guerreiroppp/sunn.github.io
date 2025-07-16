@@ -1,141 +1,876 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta content="Sun" property="og:title" />
-    <meta content="Informações sobre euzinho :)" property="og:description" />
-    <meta content="c8b7073e2cdfc245041d1de527cc60f9.png" property="og:image" />
-    <meta content="#ffffff" data-react-helmet="true" name="theme-color" />
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sun</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #121212;
-            color: #ffffff;
-        }
-        .container {
-            width: 50%;
-            margin: 0 auto;
-            padding: 15px;
-            padding-bottom: 1px;
-            background-color: #1f1f1f;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-            margin-top: 50px;
-            border-radius: 15px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .header h1 {
-            font-size: 2.5em;
-            margin: 0;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-        }
-        .profile-img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 0 auto;
-            display: block;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        .content {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-        }
-        hr {
-            width: 100%;
-            height: 1px;
-            border: 0;
-            background-color: #121212;
-        }
-        .content p {
-            font-size: 1.5em;
-            margin: 20px 0;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-        }
-        .footer {
-            text-align: center;
-            font-size: 0.9em;
-            color: #999;
-            margin: 5px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-        }
-        .footer p {
-            color: #fff;
-            text-decoration: none;
-        }
-        .footer p:hover {
-            text-decoration: underline;
-        }
-        .contacts {
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-            gap: 20px;
-            width: 70%;
-            border-radius: 10px;
-        }
-        .contact-md1 {
-            display: flex;
-            min-width: 180px;
-            height: 30px;
-            max-width: 80%;
-            align-items: center;
-            justify-content: flex-start;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            flex-direction: row;
-            cursor: pointer;
-            border-radius: 10px;
-        }
-        .contact-md1:hover {
-            transition: ease 1s;
-            scale: 1.10;
-        }
-        .contact-md1 img {
-            width: 40px;
-            margin-right: 30px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apollo</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0a0a0a;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 3s infinite;
+      transition: transform 0.3s ease-out;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: white;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.8;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+    }
+
+    @keyframes twinkle {
+
+      0%,
+      100% {
+        opacity: 0.3;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes sparkleFloat {
+      0% {
+        transform: translateY(-10px) translateX(0px) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.8;
+      }
+
+      90% {
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: translateY(100vh) translateX(20px) rotate(180deg);
+        opacity: 0;
+      }
+    }
+
+    .initial-screen {
+      text-align: center;
+      z-index: 2;
+      transition: all 0.5s ease-out;
+    }
+
+    .initial-screen h1 {
+      font-size: 3em;
+      margin: 0 0 10px 0;
+      font-weight: 300;
+      opacity: 0;
+      letter-spacing: 2px;
+    }
+
+    .initial-screen p {
+      font-size: 1.2em;
+      opacity: 0;
+      color: #b0b0b0;
+      margin: 0;
+    }
+
+    .click-hint {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.9em;
+      animation: pulse 2s infinite;
+      z-index: 2;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.4;
+      }
+
+      50% {
+        opacity: 0.8;
+      }
+    }
+
+    .discord-profile {
+      display: none;
+      background: linear-gradient(135deg, #1e1f22 0%, #2f3136 100%);
+      border-radius: 16px;
+      padding: 24px;
+      width: 340px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      transform: scale(0.8) translateY(50px);
+      opacity: 0;
+      transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 3;
+      backdrop-filter: blur(10px);
+      position: relative;
+    }
+
+
+
+    .discord-profile.show {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    .profile-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .main-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .main-avatar:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .main-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .main-avatar:hover img {
+      transform: scale(1.1);
+    }
+
+    .main-info {
+      flex: 1;
+      padding-top: 5px;
+    }
+
+    .main-username {
+      font-size: 1.5em;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: color 0.3s ease;
+    }
+
+    .typing-animation {
+      position: relative;
+    }
+
+    .typing-animation::after {
+      content: '';
+      position: absolute;
+      right: -2px;
+      top: 0;
+      height: 100%;
+      width: 2px;
+      background: #ffffff;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      50% {
+        opacity: 1;
+      }
+
+      51%,
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .main-username:hover {
+      color: #999999;
+    }
+
+    .status-badges {
+      display: flex;
+      gap: 6px;
+    }
+
+    .status-badge {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      transition: all 0.3s ease;
+      animation: badgeBounce 2s infinite;
+    }
+
+    .status-badge:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .status-badge:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .status-badge:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes badgeBounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .status-badge:hover {
+      transform: scale(1.2) translateY(-2px);
+    }
+
+    .custom-status {
+      color: #b5bac1;
+      font-size: 0.9em;
+      margin-top: 8px;
+      opacity: 0.9;
+      transition: opacity 0.3s ease;
+    }
+
+    .custom-status:hover {
+      opacity: 1;
+    }
+
+    .activity-section {
+      margin-bottom: 24px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .activity-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(4px);
+    }
+
+    .activity-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .activity-avatar:hover {
+      transform: scale(1.1);
+    }
+
+    .activity-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+
+    @keyframes statusPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    .activity-info {
+      flex: 1;
+    }
+
+    .activity-name {
+      font-size: 0.9em;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 2px;
+      transition: color 0.3s ease;
+    }
+
+    .activity-item:hover .activity-name {
+      color: #bebebe;
+    }
+
+    .activity-details {
+      font-size: 0.8em;
+      color: #b5bac1;
+    }
+
+    .spotify-section {
+      background: linear-gradient(135deg, #2f3136 0%, #36393f 100%);
+      border-radius: 12px;
+
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .spotify-section:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      border-color: #1db954;
+    }
+
+    .spotify-cover {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      background: #4f545c;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+
+    .spotify-cover:hover {
+      transform: scale(1.05) rotate(2deg);
+    }
+
+    .spotify-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .spotify-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .spotify-title {
+      font-size: 0.9em;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.3s ease;
+    }
+
+    .spotify-section:hover .spotify-title {
+      color: #1db954;
+    }
+
+    .spotify-artist {
+      font-size: 0.8em;
+      color: #b5bac1;
+      margin-bottom: 4px;
+    }
+
+    .spotify-album {
+      font-size: 0.75em;
+      color: #87898c;
+    }
+
+    .spotify-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spotify-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #b5bac1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .spotify-btn:hover {
+      background: rgba(29, 185, 84, 0.3);
+      color: #1db954;
+      transform: scale(1.1);
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.4s ease;
+      cursor: pointer;
+      font-size: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .social-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .social-link:hover::before {
+      left: 100%;
+    }
+
+    .social-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-4px) scale(1.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .social-link:nth-child(1):hover {
+      background: rgba(255, 68, 68, 0.3);
+    }
+
+    .social-link:nth-child(2):hover {
+      background: rgba(68, 170, 255, 0.3);
+    }
+
+    .social-link:nth-child(3):hover {
+      background: rgba(255, 215, 0, 0.3);
+    }
+
+    .social-link:nth-child(4):hover {
+      background: rgba(138, 43, 226, 0.3);
+    }
+
+    .view-counter {
+      text-align: left;
+      font-size: 0.75em;
+      color: #87898c;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.3s ease;
+    }
+
+    .view-counter:hover {
+      color: #b5bac1;
+    }
+
+    .view-counter svg {
+      transition: transform 0.3s ease;
+    }
+
+    .view-counter:hover svg {
+      transform: scale(1.2);
+    }
+
+    .sound-icon {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+    }
+
+    .sound-icon:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    .floating-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+
+    .ambient-text {
+      margin-top: 10px;
+      font-size: 0.85em;
+      color: #aaa;
+      font-style: italic;
+      text-align: center;
+      opacity: 0.8;
+      border-left: none;
+      padding: 0 10px;
+      transition: all 0.3s ease;
+      animation: floatyGlow 5s ease-in-out infinite;
+    }
+
+    @keyframes floatyGlow {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-2px);
+      }
+    }
+
+    .ambient-text:hover {
+      opacity: 1;
+      color: #e0e0e0;
+      transform: scale(1.02);
+    }
+
+    .ambient-text.outside {
+      width: 100%;
+      text-align: center;
+      margin-top: -10px;
+      margin-bottom: 20px;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="header">
-            <img src="c8b7073e2cdfc245041d1de527cc60f9.png" alt="Ft" class="profile-img">
-            <h1>Sun</h1>
+  <div class="stars"></div>
+
+
+  <div class="initial-screen">
+    <h1 id="nameText">Apollo</h1>
+    <p id="descText">Um ser cósmico e fofíssimo UwU</p>
+  </div>
+
+  <div class="click-hint" id="clickHint">Clique para ver o perfil</div>
+
+  <div class="discord-profile floating-animation" id="discordProfile">
+    <div class="profile-main">
+      <div class="main-avatar">
+        <img
+          src="https://nslqjgenxfwtsydwlizz.supabase.co/storage/v1/object/sign/uploads/ab6775700000ee852b093d6fedbcab4d51b6ac14.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8zMzc3ZDJlZi04MjkxLTRkZGQtYWJkNS0zZWE2ZDA0YjRkMmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1cGxvYWRzL2FiNjc3NTcwMDAwMGVlODUyYjA5M2Q2ZmVkYmNhYjRkNTFiNmFjMTQuanBnIiwiaWF0IjoxNzUyNjg1OTMzLCJleHAiOjIxMzExMTc5MzN9.MZDu21jxccxJ8l8F2l2bneN0y30yuz7ZZ5FycmVctlw"
+          alt="Avatar">
+      </div>
+
+      <div class="main-info">
+        <div class="main-username">
+          <span id="usernameTyping" class="typing-animation">Apollo</span>
+
         </div>
-        <div class="content">
-            <p>• GLSMP •</p>
-            <hr>
-            <div class="contacts">
-                <div class="contact-md1" onclick="actionContact('https://discord.com/users/1281985579806101639')">
-                    <img src="discord-mark-white.png" alt="Discord">
-                    <span>sunlool</span>
-                </div>
-                <div class="contact-md1" onclick="actionContact('https://github.com/Suunlol')">
-                    <img src="github-mark.png" alt="GitHub">
-                    <span>Github</span>
-                </div>
-            </div>
+        <div class="custom-status">
+          <span id="statusTyping" class="typing-animation">I tried to leave it all behind</span>
         </div>
-        <div class="footer">
-            <p>&copy; 2024 Sun. Todos os direitos reservados.</p>
-        </div>
+
+      </div>
+
     </div>
-    <script>
-            const actionContact = (c) => {
-                window.open(c)
-            };
-    </script>
+    <div class="ambient-text outside">
+      But I go to places, I see them changing... I go sit by your front door
+    </div>
+    <div class="activity-section">
+      <div class="activity-item">
+        <div class="activity-avatar">
+          <img src="https://cdn.discordapp.com/avatars/1356031559618138252/ecf8f2e01de1a9ffa45bf7ad88532608.png"
+            alt="Society Avatar">
+        </div>
+        <div class="activity-info">
+          <div class="activity-name">apollo.kk</div>
+          <div class="activity-details">I tiptoe at the edge of a cliff</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spotify-section">
+      <iframe src="https://open.spotify.com/embed/track/4gnc7pUJRMoZlH14eD8KbH?utm_source=generator&theme=0"
+        width="100%" height="152" frameBorder="0" allowfullscreen=""
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"
+        style="border-radius: 8px;"></iframe>
+    </div>
+
+
+
+  </div>
+
+  <script>
+    let mouseX = 0;
+    let mouseY = 0;
+    let stars = [];
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    const starsContainer = document.querySelector('.stars');
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+      star.style.left = `${x}%`;
+      star.style.top = `${y}%`;
+      star.style.animationDelay = `${Math.random() * 3}s`;
+
+      const starData = {
+        element: star,
+        baseX: x,
+        baseY: y,
+        currentX: x,
+        currentY: y
+      };
+
+      stars.push(starData);
+      starsContainer.appendChild(star);
+    }
+
+    function animateStars() {
+      stars.forEach(star => {
+        const rect = star.element.getBoundingClientRect();
+        const starCenterX = rect.left + rect.width / 2;
+        const starCenterY = rect.top + rect.height / 2;
+
+        const dx = mouseX - starCenterX;
+        const dy = mouseY - starCenterY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        const maxDistance = 200;
+        const force = Math.max(0, 1 - distance / maxDistance);
+
+        const moveX = dx * force * 0.02;
+        const moveY = dy * force * 0.02;
+
+        star.currentX += moveX * 0.1;
+        star.currentY += moveY * 0.1;
+
+        star.currentX += (star.baseX - star.currentX) * 0.01;
+        star.currentY += (star.baseY - star.currentY) * 0.01;
+
+        const finalX = star.currentX - star.baseX;
+        const finalY = star.currentY - star.baseY;
+        star.element.style.transform = `translate(${finalX}vw, ${finalY}vh)`;
+      });
+
+      requestAnimationFrame(animateStars);
+    }
+
+    function typeText(element, text, speed = 150) {
+      let index = 1;
+      let isDeleting = false;
+      const firstLetter = text.charAt(0);
+
+      function type() {
+        if (!isDeleting) {
+          element.textContent = firstLetter + text.substring(1, index);
+          index++;
+
+          if (index > text.length) {
+            setTimeout(() => {
+              isDeleting = true;
+            }, 2000);
+          }
+        } else {
+          element.textContent = firstLetter + text.substring(1, index);
+          index--;
+
+          if (index < 1) {
+            isDeleting = false;
+            index = 1;
+          }
+        }
+
+        const currentSpeed = isDeleting ? speed / 2 : speed;
+        setTimeout(type, currentSpeed);
+      }
+
+      type();
+    }
+
+    function infiniteTypingTitle(text, speed = 150, pause = 2000) {
+      let index = 1; 
+      let isDeleting = false;
+
+      function updateTitle() {
+        const firstChar = text.charAt(0);
+        const rest = text.substring(1, index);
+
+        document.title = firstChar + rest;
+
+        if (!isDeleting) {
+          index++;
+
+          if (index > text.length) {
+            isDeleting = true;
+            setTimeout(updateTitle, pause); r
+            return;
+          }
+        } else {
+          index--;
+
+          if (index <= 1) {
+            isDeleting = false;
+          }
+        }
+
+        setTimeout(updateTitle, isDeleting ? speed / 2 : speed);
+      }
+
+      updateTitle();
+    }
+
+
+
+
+    function typeTextInitial(el, text, delay = 50, callback = () => { }) {
+      let i = 0;
+      el.innerHTML = '';
+      el.style.opacity = 1;
+      const typer = setInterval(() => {
+        el.innerHTML += text.charAt(i);
+        i++;
+        if (i >= text.length) {
+          clearInterval(typer);
+          callback();
+        }
+      }, delay);
+    }
+
+    window.onload = () => {
+      const nameEl = document.getElementById("nameText");
+      const descEl = document.getElementById("descText");
+      const initialScreen = document.querySelector(".initial-screen");
+      const discordProfile = document.getElementById("discordProfile");
+      const clickHint = document.getElementById("clickHint");
+      infiniteTypingTitle("Apollo", 450, 2000);
+
+      animateStars();
+
+      typeTextInitial(nameEl, "Apollo", 80, () => {
+        setTimeout(() => {
+          typeTextInitial(descEl, "Pode entrar...", 60);
+        }, 100);
+      });
+
+      document.body.addEventListener('click', (e) => {
+        if (e.target.closest('.sound-icon')) return;
+
+        initialScreen.style.transform = 'translateY(-30px)';
+        initialScreen.style.opacity = '0';
+        clickHint.style.opacity = '0';
+
+        setTimeout(() => {
+          initialScreen.style.display = 'none';
+          clickHint.style.display = 'none';
+          discordProfile.style.display = 'block';
+
+          setTimeout(() => {
+            discordProfile.classList.add('show');
+
+            const usernameEl = document.getElementById("usernameTyping");
+            const statusEl = document.getElementById("statusTyping");
+
+            setTimeout(() => {
+              typeText(usernameEl, "Apollo", 120);
+            }, 500);
+
+            setTimeout(() => {
+              typeText(statusEl, `I tried to leave it all behind`, 80);
+            }, 1000);
+          }, 50);
+        }, 300);
+      }, { once: true });
+
+    };
+  </script>
 </body>
+
 </html>
