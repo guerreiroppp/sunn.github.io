@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gojira - Owari No Seraph</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jwplayer.com/libraries/SAHhwvZq.js" async></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: #111111;
+            border-bottom: 1px solid #333333;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: #cccccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #ffffff;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Anime Header */
+        .anime-header {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 50px;
+            background: #111111;
+            border-radius: 12px;
+            padding: 40px;
+            border: 1px solid #222222;
+        }
+
+        .anime-poster {
+            width: 220px;
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .anime-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .anime-info {
+            flex: 1;
+        }
+
+        .anime-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .anime-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: #222222;
+            color: #cccccc;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            border: 1px solid #333333;
+        }
+
+        .anime-description {
+            line-height: 1.8;
+            color: #cccccc;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stars {
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        .rating-text {
+            color: #cccccc;
+        }
+
+        /* Video Player */
+        .video-section {
+            margin-bottom: 50px;
+        }
+
+        .video-container {
+            background: #111111;
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid #222222;
+        }
+
+        .video-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .current-episode {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .cast-button {
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cast-button:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        #player {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Episodes Section */
+        .episodes-section {
+            background: #111111;
+            border-radius: 12px;
+            padding: 40px;
+            border: 1px solid #222222;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .episodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .episode-card {
+            background: #000000;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .episode-card:hover {
+            background: #1a1a1a;
+            border-color: #555555;
+            transform: translateY(-3px);
+        }
+
+        .episode-card.active {
+            background: #222222;
+            border-color: #ffffff;
+        }
+
+        .episode-number {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .episode-title {
+            font-size: 14px;
+            color: #ffffff;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .episode-duration {
+            font-size: 12px;
+            color: #888888;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 15px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .anime-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 20px;
+            }
+            
+            .anime-poster {
+                width: 180px;
+                height: 250px;
+                margin: 0 auto;
+            }
+            
+            .anime-title {
+                font-size: 2.2rem;
+            }
+            
+            .episodes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .anime-header {
+                padding: 20px 15px;
+            }
+            
+            .video-container, .episodes-section {
+                padding: 20px 15px;
+            }
+            
+            .anime-meta {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">Gojira</div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Anime Header -->
+        <div class="anime-header">
+            <div class="anime-poster">
+                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=220&h=300&fit=crop" alt="Naruto Poster">
+            </div>
+            <div class="anime-info">
+                <h1 class="anime-title">Naruto</h1>
+                <div class="anime-meta">
+                    <span class="meta-item">2002</span>
+                    <span class="meta-item">Ação</span>
+                    <span class="meta-item">720 episódios</span>
+                    <span class="meta-item">Legendado</span>
+                </div>
+                <p class="anime-description">
+                    Naruto Uzumaki é um jovem ninja da Vila da Folha que busca reconhecimento e sonha em se tornar o Hokage, o líder da vila. A série segue suas aventuras enquanto ele treina para se tornar mais forte e proteger seus amigos.
+                </p>
+                <div class="rating">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="rating-text">4.8/5 (2.5k avaliações)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Player Section -->
+        <div class="video-section">
+            <div class="video-container">
+                <div class="video-header">
+                    <div class="current-episode" id="currentEpisodeTitle">
+                        Episódio 1 - Entre! Naruto Uzumaki
+                    </div>
+                    <button class="cast-button" onclick="castToTV()">
+                        <i class="fas fa-tv"></i>
+                        Cast para TV
+                    </button>
+                </div>
+                <div id="player"></div>
+            </div>
+        </div>
+
+        <!-- Episodes Section -->
+        <div class="episodes-section">
+            <h2 class="section-title">Todos os Episódios</h2>
+            <div class="episodes-grid" id="episodesList">
+                <!-- Episodes will be generated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURAÇÃO FÁCIL - ADICIONE SEUS EPISÓDIOS AQUI
+        const animeData = {
+            title: "Naruto",
+            episodes: [
+                {
+                    number: 1,
+                    title: "Entre! Naruto Uzumaki",
+                    duration: "23:40",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                },
+                {
+                    number: 2,
+                    title: "Meu Nome é Konohamaru!",
+                    duration: "23:35",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+                },
+                {
+                    number: 3,
+                    title: "Rivais? Sasuke e Sakura",
+                    duration: "23:42",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                },
+                {
+                    number: 4,
+                    title: "Teste! Sobrevivência em Campo de Treinamento",
+                    duration: "23:38",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+                },
+                {
+                    number: 5,
+                    title: "Falhou! O Teste Final de Kakashi",
+                    duration: "23:41",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+                },
+                {
+                    number: 6,
+                    title: "Uma Missão Importante! Vamos para a Terra das Ondas!",
+                    duration: "23:44",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                }
+            ]
+        };
+
+        let player;
+        let currentEpisode = 0;
+
+        // Initialize JWPlayer
+        function initPlayer(videoUrl) {
+            // Check if JWPlayer is available
+            if (typeof jwplayer === 'undefined') {
+                console.error('JWPlayer não está carregado ainda. Tentando novamente...');
+                setTimeout(() => initPlayer(videoUrl), 500);
+                return;
+            }
+
+            if (player) {
+                player.remove();
+            }
+            
+            player = jwplayer("player").setup({
+                file: videoUrl,
+                width: '100%',
+                height: '500px',
+                aspectratio: '16:9',
+                skin: 'netflix',
+                controls: true,
+                displaytitle: true,
+                displaydescription: true,
+                abouttext: "AnimeStream",
+                aboutlink: "#",
+                sharing: {
+                    sites: ["reddit", "facebook", "twitter"]
+                },
+                captions: {
+                    color: '#FFF',
+                    fontSize: 14,
+                    backgroundOpacity: 75,
+                    edgeStyle: 'raised'
+                },
+                playlist: [{
+                    file: videoUrl,
+                    title: animeData.episodes[currentEpisode].title,
+                    description: `Episódio ${animeData.episodes[currentEpisode].number}`
+                }]
+            });
+
+            // Enable casting functionality
+            player.on('ready', function() {
+                if (typeof cast !== 'undefined' && cast.framework) {
+                    cast.framework.CastContext.getInstance().setOptions({
+                        receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+                        autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+                    });
+                }
+            });
+
+            player.on('complete', function() {
+                // Auto-play next episode
+                if (currentEpisode < animeData.episodes.length - 1) {
+                    setTimeout(() => {
+                        playEpisode(currentEpisode + 1);
+                    }, 3000);
+                }
+            });
+        }
+
+        // Generate episodes list
+        function generateEpisodesList() {
+            const episodesList = document.getElementById('episodesList');
+            episodesList.innerHTML = '';
+
+            animeData.episodes.forEach((episode, index) => {
+                const episodeCard = document.createElement('div');
+                episodeCard.className = `episode-card ${index === currentEpisode ? 'active' : ''}`;
+                episodeCard.onclick = () => playEpisode(index);
+                
+                episodeCard.innerHTML = `
+                    <div class="episode-number">Episódio ${episode.number}</div>
+                    <div class="episode-title">${episode.title}</div>
+                    <div class="episode-duration">
+                        <i class="fas fa-clock"></i>
+                        ${episode.duration}
+                    </div>
+                `;
+                
+                episodesList.appendChild(episodeCard);
+            });
+        }
+
+        // Play specific episode
+        function playEpisode(episodeIndex) {
+            if (episodeIndex >= 0 && episodeIndex < animeData.episodes.length) {
+                currentEpisode = episodeIndex;
+                const episode = animeData.episodes[episodeIndex];
+                
+                // Update current episode title
+                document.getElementById('currentEpisodeTitle').textContent = 
+                    `Episódio ${episode.number} - ${episode.title}`;
+                
+                // Update active episode in list
+                document.querySelectorAll('.episode-card').forEach((card, index) => {
+                    card.classList.toggle('active', index === episodeIndex);
+                });
+                
+                // Initialize player with new episode
+                initPlayer(episode.videoUrl);
+                
+                // Scroll to top of video
+                document.querySelector('.video-section').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+            }
+        }
+
+        // Cast to TV function
+        function castToTV() {
+            if (player && typeof chrome !== 'undefined' && chrome.cast) {
+                chrome.cast.requestSession(
+                    function(session) {
+                        const mediaInfo = new chrome.cast.media.MediaInfo(
+                            animeData.episodes[currentEpisode].videoUrl,
+                            'video/mp4'
+                        );
+                        mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
+                        mediaInfo.metadata.title = animeData.episodes[currentEpisode].title;
+                        mediaInfo.metadata.subtitle = `${animeData.title} - Episódio ${animeData.episodes[currentEpisode].number}`;
+                        
+                        const request = new chrome.cast.media.LoadRequest(mediaInfo);
+                        session.loadMedia(request);
+                    },
+                    function(error) {
+                        alert('Erro ao conectar com a TV: ' + error.description);
+                    }
+                );
+            } else {
+                alert('Funcionalidade de cast não disponível. Certifique-se de ter o Google Cast instalado.');
+            }
+        }
+
+        // Initialize the page
+        function initializePage() {
+            generateEpisodesList();
+            
+            // Wait for JWPlayer to be available
+            if (typeof jwplayer === 'undefined') {
+                setTimeout(initializePage, 500);
+                return;
+            }
+            
+            playEpisode(0); // Start with first episode
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+        });
+
+        // Also try to initialize when JWPlayer script loads
+        window.addEventListener('load', function() {
+            if (typeof jwplayer !== 'undefined' && !player) {
+                initializePage();
+            }
+        });
+
+        // Google Cast API
+        window['__onGCastApiAvailable'] = function(isAvailable) {
+            if (isAvailable) {
+                cast.framework.CastContext.getInstance().setOptions({
+                    receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+                    autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+                });
+            }
+        };
+    </script>
+    
+    <!-- Google Cast SDK -->
+    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+</body>
+</html>
