@@ -167,6 +167,12 @@
             color: #ffffff;
         }
 
+        .cast-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
         .cast-button {
             background: #ffffff;
             color: #000000;
@@ -185,6 +191,24 @@
         .cast-button:hover {
             background: #f0f0f0;
             transform: translateY(-2px);
+        }
+
+        .cast-button:disabled {
+            background: #666666;
+            color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .cast-button.casting {
+            background: #4285f4;
+            color: white;
+        }
+
+        .cast-status {
+            font-size: 12px;
+            color: #888888;
+            margin-left: 10px;
         }
 
         #player {
@@ -256,6 +280,25 @@
             gap: 5px;
         }
 
+        /* Cast notification */
+        .cast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4285f4;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-content {
@@ -313,6 +356,9 @@
     </style>
 </head>
 <body>
+    <!-- Cast Notification -->
+    <div id="castNotification" class="cast-notification"></div>
+
     <!-- Header -->
     <header class="header">
         <div class="header-content">
@@ -358,10 +404,13 @@
                     <div class="current-episode" id="currentEpisodeTitle">
                         Episódio 1 - Entre! Naruto Uzumaki
                     </div>
-                    <button class="cast-button" onclick="castToTV()">
-                        <i class="fas fa-tv"></i>
-                        Cast para TV
-                    </button>
+                    <div class="cast-controls">
+                        <button class="cast-button" id="castButton" onclick="initiateCast()">
+                            <i class="fas fa-tv"></i>
+                            <span id="castButtonText">Cast para TV</span>
+                        </button>
+                        <div class="cast-status" id="castStatus"></div>
+                    </div>
                 </div>
                 <div id="player"></div>
             </div>
@@ -422,12 +471,215 @@
 
         let player;
         let currentEpisode = 0;
+        let castContext;
+        let castSession;
+        let currentMediaSession;
+
+        // Cast state management
+        const CastState = {
+            NOT_CONNECTED: 'NOT_CONNECTED',
+            CONNECTING: 'CONNECTING',
+            CONNECTED: 'CONNECTED'
+        };
+
+        let castState = CastState.NOT_CONNECTED;
+
+        // Initialize Cast API
+        function initializeCastApi() {
+            if (typeof cast !== 'undefined' && cast.framework) {
+                castContext = cast.framework.CastContext.getInstance();
+                
+                const options = new cast.framework.CastOptions();
+                options.receiverApplicationId = cast.framework.CastReceiverContext.CUSTOM_RECEIVER_APPLICATION_ID || 
+                                                chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID;
+                options.autoJoinPolicy = chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED;
+                
+                castContext.setOptions(options);
+                
+                // Listen for cast state changes
+                castContext.addEventListener(
+                    cast.framework.CastContextEventType.CAST_STATE_CHANGED,
+                    onCastStateChanged
+                );
+                
+                // Listen for session state changes
+                castContext.addEventListener(
+                    cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
+                    onSessionStateChanged
+                );
+                
+                updateCastButton();
+                showNotification('Google Cast inicializado com sucesso!');
+            }
+        }
+
+        // Handle cast state changes
+        function onCastStateChanged(event) {
+            switch (event.castState) {
+                case cast.framework.CastState.NO_DEVICES_AVAILABLE:
+                    showNotification('Nenhum dispositivo Chromecast encontrado');
+                    break;
+                case cast.framework.CastState.NOT_CONNECTED:
+                    castState = CastState.NOT_CONNECTED;
+                    break;
+                case cast.framework.CastState.CONNECTING:
+                    castState = CastState.CONNECTING;
+                    showNotification('Conectando ao Chromecast...');
+                    break;
+                case cast.framework.CastState.CONNECTED:
+                    castState = CastState.CONNECTED;
+                    showNotification('Conectado ao Chromecast!');
+                    break;
+            }
+            updateCastButton();
+        }
+
+        // Handle session state changes
+        function onSessionStateChanged(event) {
+            castSession = event.session;
+            
+            if (castSession) {
+                // Session started
+                castSession.addUpdateListener(onSessionUpdate);
+                castSession.addMessageListener(
+                    cast.framework.messages.MessageType.MEDIA_STATUS,
+                    onMediaStatusUpdate
+                );
+                
+                // Load current episode to Chromecast
+                loadMediaToCast();
+            } else {
+                // Session ended
+                currentMediaSession = null;
+                showNotification('Desconectado do Chromecast');
+            }
+            
+            updateCastButton();
+        }
+
+        // Session update handler
+        function onSessionUpdate(isAlive) {
+            if (!isAlive) {
+                castSession = null;
+                currentMediaSession = null;
+                castState = CastState.NOT_CONNECTED;
+                updateCastButton();
+            }
+        }
+
+        // Media status update handler
+        function onMediaStatusUpdate(event) {
+            if (!event.isAlive) {
+                currentMediaSession = null;
+            }
+        }
+
+        // Update cast button appearance
+        function updateCastButton() {
+            const button = document.getElementById('castButton');
+            const buttonText = document.getElementById('castButtonText');
+            const status = document.getElementById('castStatus');
+            
+            switch (castState) {
+                case CastState.NOT_CONNECTED:
+                    button.disabled = false;
+                    button.className = 'cast-button';
+                    buttonText.textContent = 'Cast para TV';
+                    status.textContent = '';
+                    break;
+                case CastState.CONNECTING:
+                    button.disabled = true;
+                    button.className = 'cast-button';
+                    buttonText.textContent = 'Conectando...';
+                    status.textContent = 'Conectando...';
+                    break;
+                case CastState.CONNECTED:
+                    button.disabled = false;
+                    button.className = 'cast-button casting';
+                    buttonText.textContent = 'Parar Cast';
+                    status.textContent = 'Conectado';
+                    break;
+            }
+        }
+
+        // Load media to cast device
+        function loadMediaToCast() {
+            if (!castSession) return;
+            
+            const episode = animeData.episodes[currentEpisode];
+            
+            const mediaInfo = new chrome.cast.media.MediaInfo(episode.videoUrl, 'video/mp4');
+            
+            const metadata = new chrome.cast.media.GenericMediaMetadata();
+            metadata.title = episode.title;
+            metadata.subtitle = `${animeData.title} - Episódio ${episode.number}`;
+            metadata.images = [{
+                url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop'
+            }];
+            
+            mediaInfo.metadata = metadata;
+            
+            const request = new chrome.cast.media.LoadRequest(mediaInfo);
+            request.autoplay = true;
+            request.currentTime = player ? player.getPosition() : 0;
+            
+            castSession.loadMedia(request).then(
+                function() {
+                    currentMediaSession = castSession.getMediaSession();
+                    showNotification('Vídeo carregado no Chromecast!');
+                    
+                    // Pause local player
+                    if (player) {
+                        player.pause();
+                    }
+                },
+                function(error) {
+                    console.error('Erro ao carregar mídia:', error);
+                    showNotification('Erro ao carregar vídeo no Chromecast');
+                }
+            );
+        }
+
+        // Initiate cast (connect or disconnect)
+        function initiateCast() {
+            if (!castContext) {
+                showNotification('Google Cast não está disponível');
+                return;
+            }
+            
+            if (castState === CastState.CONNECTED) {
+                // Stop casting
+                castContext.endCurrentSession(true);
+            } else {
+                // Start casting
+                castContext.requestSession().then(
+                    function(session) {
+                        showNotification('Sessão de cast iniciada!');
+                    },
+                    function(error) {
+                        if (error.code !== chrome.cast.ErrorCode.CANCEL) {
+                            console.error('Erro ao iniciar cast:', error);
+                            showNotification('Erro ao conectar com o Chromecast');
+                        }
+                    }
+                );
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('castNotification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
 
         // Initialize JWPlayer
         function initPlayer(videoUrl) {
-            // Check if JWPlayer is available
             if (typeof jwplayer === 'undefined') {
-                console.error('JWPlayer não está carregado ainda. Tentando novamente...');
                 setTimeout(() => initPlayer(videoUrl), 500);
                 return;
             }
@@ -445,7 +697,7 @@
                 controls: true,
                 displaytitle: true,
                 displaydescription: true,
-                abouttext: "AnimeStream",
+                abouttext: "Gojira AnimeStream",
                 aboutlink: "#",
                 sharing: {
                     sites: ["reddit", "facebook", "twitter"]
@@ -463,14 +715,8 @@
                 }]
             });
 
-            // Enable casting functionality
             player.on('ready', function() {
-                if (typeof cast !== 'undefined' && cast.framework) {
-                    cast.framework.CastContext.getInstance().setOptions({
-                        receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-                        autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
-                    });
-                }
+                // Player ready
             });
 
             player.on('complete', function() {
@@ -524,35 +770,17 @@
                 // Initialize player with new episode
                 initPlayer(episode.videoUrl);
                 
+                // If casting, load new episode to cast device
+                if (castState === CastState.CONNECTED) {
+                    setTimeout(() => {
+                        loadMediaToCast();
+                    }, 1000);
+                }
+                
                 // Scroll to top of video
                 document.querySelector('.video-section').scrollIntoView({ 
                     behavior: 'smooth' 
                 });
-            }
-        }
-
-        // Cast to TV function
-        function castToTV() {
-            if (player && typeof chrome !== 'undefined' && chrome.cast) {
-                chrome.cast.requestSession(
-                    function(session) {
-                        const mediaInfo = new chrome.cast.media.MediaInfo(
-                            animeData.episodes[currentEpisode].videoUrl,
-                            'video/mp4'
-                        );
-                        mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
-                        mediaInfo.metadata.title = animeData.episodes[currentEpisode].title;
-                        mediaInfo.metadata.subtitle = `${animeData.title} - Episódio ${animeData.episodes[currentEpisode].number}`;
-                        
-                        const request = new chrome.cast.media.LoadRequest(mediaInfo);
-                        session.loadMedia(request);
-                    },
-                    function(error) {
-                        alert('Erro ao conectar com a TV: ' + error.description);
-                    }
-                );
-            } else {
-                alert('Funcionalidade de cast não disponível. Certifique-se de ter o Google Cast instalado.');
             }
         }
 
@@ -569,26 +797,24 @@
             playEpisode(0); // Start with first episode
         }
 
+        // Cast API available callback
+        window['__onGCastApiAvailable'] = function(isAvailable) {
+            if (isAvailable) {
+                initializeCastApi();
+            } else {
+                showNotification('Google Cast não está disponível neste navegador');
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', function() {
             initializePage();
         });
 
-        // Also try to initialize when JWPlayer script loads
         window.addEventListener('load', function() {
             if (typeof jwplayer !== 'undefined' && !player) {
                 initializePage();
             }
         });
-
-        // Google Cast API
-        window['__onGCastApiAvailable'] = function(isAvailable) {
-            if (isAvailable) {
-                cast.framework.CastContext.getInstance().setOptions({
-                    receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-                    autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
-                });
-            }
-        };
     </script>
     
     <!-- Google Cast SDK -->
