@@ -174,8 +174,8 @@
         }
 
         .cast-button {
-            background: #ffffff;
-            color: #000000;
+            background: #007bff;
+            color: #ffffff;
             border: none;
             padding: 10px 20px;
             border-radius: 6px;
@@ -189,7 +189,7 @@
         }
 
         .cast-button:hover {
-            background: #f0f0f0;
+            background: #0056b3;
             transform: translateY(-2px);
         }
 
@@ -198,11 +198,6 @@
             color: #cccccc;
             cursor: not-allowed;
             transform: none;
-        }
-
-        .cast-button.casting {
-            background: #4285f4;
-            color: white;
         }
 
         .cast-status {
@@ -285,7 +280,7 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #4285f4;
+            background: #007bff;
             color: white;
             padding: 15px 20px;
             border-radius: 8px;
@@ -297,6 +292,88 @@
         @keyframes slideIn {
             from { transform: translateX(100%); }
             to { transform: translateX(0); }
+        }
+
+        /* Web Video Caster Modal */
+        .wvc-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .wvc-modal-content {
+            background-color: #111111;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #333333;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            color: white;
+            text-align: center;
+        }
+
+        .wvc-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: -10px;
+        }
+
+        .wvc-close:hover {
+            color: white;
+        }
+
+        .wvc-qr {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .wvc-instructions {
+            margin: 20px 0;
+            line-height: 1.6;
+            color: #cccccc;
+        }
+
+        .wvc-url {
+            background: #222222;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            word-break: break-all;
+            font-family: monospace;
+            border: 1px solid #333333;
+        }
+
+        .copy-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: #0056b3;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* Responsive */
@@ -338,6 +415,12 @@
                 gap: 15px;
                 align-items: flex-start;
             }
+
+            .wvc-modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 20px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -358,6 +441,41 @@
 <body>
     <!-- Cast Notification -->
     <div id="castNotification" class="cast-notification"></div>
+
+    <!-- Web Video Caster Modal -->
+    <div id="wvcModal" class="wvc-modal">
+        <div class="wvc-modal-content">
+            <span class="wvc-close" onclick="closeWVCModal()">&times;</span>
+            <h2><i class="fas fa-tv"></i> Transmitir para TV</h2>
+            <div class="wvc-instructions">
+                <p><strong>Como transmitir:</strong></p>
+                <p>1. Instale o app <strong>Web Video Caster</strong> na sua Smart TV ou dispositivo</p>
+                <p>2. Abra o app e escaneie o QR Code abaixo ou acesse a URL</p>
+                <p>3. O vídeo será reproduzido automaticamente na sua TV</p>
+            </div>
+            
+            <div class="wvc-qr" id="qrContainer">
+                <!-- QR Code será gerado aqui -->
+            </div>
+            
+            <div class="wvc-url" id="castUrl">
+                <!-- URL será gerada aqui -->
+            </div>
+            
+            <div>
+                <button class="copy-button" onclick="copyToClipboard()">
+                    <i class="fas fa-copy"></i> Copiar URL
+                </button>
+                <button class="copy-button" onclick="openInNewTab()">
+                    <i class="fas fa-external-link-alt"></i> Abrir em Nova Aba
+                </button>
+            </div>
+            
+            <div class="wvc-instructions" style="margin-top: 20px; font-size: 12px;">
+                <p><strong>Apps compatíveis:</strong> Web Video Caster, AllCast, LocalCast, BubbleUPnP</p>
+            </div>
+        </div>
+    </div>
 
     <!-- Header -->
     <header class="header">
@@ -405,11 +523,10 @@
                         Episódio 1 - Entre! Naruto Uzumaki
                     </div>
                     <div class="cast-controls">
-                        <button class="cast-button" id="castButton" onclick="initiateCast()">
+                        <button class="cast-button" id="castButton" onclick="openWVCModal()">
                             <i class="fas fa-tv"></i>
-                            <span id="castButtonText">Cast para TV</span>
+                            <span>Transmitir para TV</span>
                         </button>
-                        <div class="cast-status" id="castStatus"></div>
                     </div>
                 </div>
                 <div id="player"></div>
@@ -471,199 +588,127 @@
 
         let player;
         let currentEpisode = 0;
-        let castContext;
-        let castSession;
-        let currentMediaSession;
 
-        // Cast state management
-        const CastState = {
-            NOT_CONNECTED: 'NOT_CONNECTED',
-            CONNECTING: 'CONNECTING',
-            CONNECTED: 'CONNECTED'
-        };
-
-        let castState = CastState.NOT_CONNECTED;
-
-        // Initialize Cast API
-        function initializeCastApi() {
-            if (typeof cast !== 'undefined' && cast.framework) {
-                castContext = cast.framework.CastContext.getInstance();
-                
-                const options = new cast.framework.CastOptions();
-                options.receiverApplicationId = cast.framework.CastReceiverContext.CUSTOM_RECEIVER_APPLICATION_ID || 
-                                                chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID;
-                options.autoJoinPolicy = chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED;
-                
-                castContext.setOptions(options);
-                
-                // Listen for cast state changes
-                castContext.addEventListener(
-                    cast.framework.CastContextEventType.CAST_STATE_CHANGED,
-                    onCastStateChanged
-                );
-                
-                // Listen for session state changes
-                castContext.addEventListener(
-                    cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
-                    onSessionStateChanged
-                );
-                
-                updateCastButton();
-                showNotification('Google Cast inicializado com sucesso!');
-            }
-        }
-
-        // Handle cast state changes
-        function onCastStateChanged(event) {
-            switch (event.castState) {
-                case cast.framework.CastState.NO_DEVICES_AVAILABLE:
-                    showNotification('Nenhum dispositivo Chromecast encontrado');
-                    break;
-                case cast.framework.CastState.NOT_CONNECTED:
-                    castState = CastState.NOT_CONNECTED;
-                    break;
-                case cast.framework.CastState.CONNECTING:
-                    castState = CastState.CONNECTING;
-                    showNotification('Conectando ao Chromecast...');
-                    break;
-                case cast.framework.CastState.CONNECTED:
-                    castState = CastState.CONNECTED;
-                    showNotification('Conectado ao Chromecast!');
-                    break;
-            }
-            updateCastButton();
-        }
-
-        // Handle session state changes
-        function onSessionStateChanged(event) {
-            castSession = event.session;
-            
-            if (castSession) {
-                // Session started
-                castSession.addUpdateListener(onSessionUpdate);
-                castSession.addMessageListener(
-                    cast.framework.messages.MessageType.MEDIA_STATUS,
-                    onMediaStatusUpdate
-                );
-                
-                // Load current episode to Chromecast
-                loadMediaToCast();
-            } else {
-                // Session ended
-                currentMediaSession = null;
-                showNotification('Desconectado do Chromecast');
-            }
-            
-            updateCastButton();
-        }
-
-        // Session update handler
-        function onSessionUpdate(isAlive) {
-            if (!isAlive) {
-                castSession = null;
-                currentMediaSession = null;
-                castState = CastState.NOT_CONNECTED;
-                updateCastButton();
-            }
-        }
-
-        // Media status update handler
-        function onMediaStatusUpdate(event) {
-            if (!event.isAlive) {
-                currentMediaSession = null;
-            }
-        }
-
-        // Update cast button appearance
-        function updateCastButton() {
-            const button = document.getElementById('castButton');
-            const buttonText = document.getElementById('castButtonText');
-            const status = document.getElementById('castStatus');
-            
-            switch (castState) {
-                case CastState.NOT_CONNECTED:
-                    button.disabled = false;
-                    button.className = 'cast-button';
-                    buttonText.textContent = 'Cast para TV';
-                    status.textContent = '';
-                    break;
-                case CastState.CONNECTING:
-                    button.disabled = true;
-                    button.className = 'cast-button';
-                    buttonText.textContent = 'Conectando...';
-                    status.textContent = 'Conectando...';
-                    break;
-                case CastState.CONNECTED:
-                    button.disabled = false;
-                    button.className = 'cast-button casting';
-                    buttonText.textContent = 'Parar Cast';
-                    status.textContent = 'Conectado';
-                    break;
-            }
-        }
-
-        // Load media to cast device
-        function loadMediaToCast() {
-            if (!castSession) return;
-            
+        // Web Video Caster Integration
+        function generateCastUrl() {
             const episode = animeData.episodes[currentEpisode];
+            const baseUrl = window.location.origin + window.location.pathname;
             
-            const mediaInfo = new chrome.cast.media.MediaInfo(episode.videoUrl, 'video/mp4');
+            // Create a casting URL with video parameters
+            const castParams = new URLSearchParams({
+                video: episode.videoUrl,
+                title: episode.title,
+                subtitle: `${animeData.title} - Episódio ${episode.number}`,
+                poster: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop',
+                autoplay: 'true'
+            });
             
-            const metadata = new chrome.cast.media.GenericMediaMetadata();
-            metadata.title = episode.title;
-            metadata.subtitle = `${animeData.title} - Episódio ${episode.number}`;
-            metadata.images = [{
-                url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop'
-            }];
-            
-            mediaInfo.metadata = metadata;
-            
-            const request = new chrome.cast.media.LoadRequest(mediaInfo);
-            request.autoplay = true;
-            request.currentTime = player ? player.getPosition() : 0;
-            
-            castSession.loadMedia(request).then(
-                function() {
-                    currentMediaSession = castSession.getMediaSession();
-                    showNotification('Vídeo carregado no Chromecast!');
-                    
-                    // Pause local player
-                    if (player) {
-                        player.pause();
-                    }
-                },
-                function(error) {
-                    console.error('Erro ao carregar mídia:', error);
-                    showNotification('Erro ao carregar vídeo no Chromecast');
-                }
-            );
+            return `${baseUrl}?cast=true&${castParams.toString()}`;
         }
 
-        // Initiate cast (connect or disconnect)
-        function initiateCast() {
-            if (!castContext) {
-                showNotification('Google Cast não está disponível');
-                return;
+        function generateQRCode(text) {
+            // Simple QR code generation using API
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
+            return `<img src="${qrApiUrl}" alt="QR Code" style="max-width: 200px;">`;
+        }
+
+        function openWVCModal() {
+            const modal = document.getElementById('wvcModal');
+            const qrContainer = document.getElementById('qrContainer');
+            const urlContainer = document.getElementById('castUrl');
+            
+            const castUrl = generateCastUrl();
+            
+            qrContainer.innerHTML = generateQRCode(castUrl);
+            urlContainer.textContent = castUrl;
+            
+            modal.style.display = 'block';
+            
+            showNotification('Modal de transmissão aberto! Escaneie o QR Code ou copie a URL.');
+        }
+
+        function closeWVCModal() {
+            document.getElementById('wvcModal').style.display = 'none';
+        }
+
+        function copyToClipboard() {
+            const urlText = document.getElementById('castUrl').textContent;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(urlText).then(() => {
+                    showNotification('URL copiada para a área de transferência!');
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(urlText);
+                });
+            } else {
+                fallbackCopyTextToClipboard(urlText);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showNotification('URL copiada para a área de transferência!');
+            } catch (err) {
+                showNotification('Erro ao copiar URL. Selecione e copie manualmente.');
             }
             
-            if (castState === CastState.CONNECTED) {
-                // Stop casting
-                castContext.endCurrentSession(true);
-            } else {
-                // Start casting
-                castContext.requestSession().then(
-                    function(session) {
-                        showNotification('Sessão de cast iniciada!');
-                    },
-                    function(error) {
-                        if (error.code !== chrome.cast.ErrorCode.CANCEL) {
-                            console.error('Erro ao iniciar cast:', error);
-                            showNotification('Erro ao conectar com o Chromecast');
-                        }
-                    }
-                );
+            document.body.removeChild(textArea);
+        }
+
+        function openInNewTab() {
+            const castUrl = document.getElementById('castUrl').textContent;
+            window.open(castUrl, '_blank');
+            showNotification('URL aberta em nova aba!');
+        }
+
+        // Check if page is being loaded for casting
+        function checkCastMode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.get('cast') === 'true') {
+                // This is a cast URL, set up for casting mode
+                const videoUrl = urlParams.get('video');
+                const title = urlParams.get('title');
+                const subtitle = urlParams.get('subtitle');
+                
+                if (videoUrl) {
+                    document.body.innerHTML = `
+                        <div style="background: #000; color: #fff; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;">
+                            <h1 style="margin-bottom: 20px;">🎬 ${title || 'Reproduzindo Vídeo'}</h1>
+                            <p style="margin-bottom: 30px; color: #ccc;">${subtitle || ''}</p>
+                            <video 
+                                controls 
+                                autoplay 
+                                style="width: 100%; max-width: 1200px; max-height: 80vh;"
+                                poster="${urlParams.get('poster') || ''}"
+                            >
+                                <source src="${videoUrl}" type="video/mp4">
+                                Seu navegador não suporta a reprodução de vídeo.
+                            </video>
+                            <p style="margin-top: 20px; color: #888; font-size: 14px;">
+                                🔗 Transmitindo via Web Video Caster
+                            </p>
+                        </div>
+                    `;
+                    
+                    // Set page title
+                    document.title = title || 'Gojira - Reproduzindo Vídeo';
+                    return true;
+                }
             }
+            
+            return false;
         }
 
         // Show notification
@@ -770,13 +815,6 @@
                 // Initialize player with new episode
                 initPlayer(episode.videoUrl);
                 
-                // If casting, load new episode to cast device
-                if (castState === CastState.CONNECTED) {
-                    setTimeout(() => {
-                        loadMediaToCast();
-                    }, 1000);
-                }
-                
                 // Scroll to top of video
                 document.querySelector('.video-section').scrollIntoView({ 
                     behavior: 'smooth' 
@@ -786,6 +824,11 @@
 
         // Initialize the page
         function initializePage() {
+            // Check if we're in cast mode first
+            if (checkCastMode()) {
+                return; // Stop here if we're in cast mode
+            }
+            
             generateEpisodesList();
             
             // Wait for JWPlayer to be available
@@ -797,14 +840,20 @@
             playEpisode(0); // Start with first episode
         }
 
-        // Cast API available callback
-        window['__onGCastApiAvailable'] = function(isAvailable) {
-            if (isAvailable) {
-                initializeCastApi();
-            } else {
-                showNotification('Google Cast não está disponível neste navegador');
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('wvcModal');
+            if (event.target === modal) {
+                closeWVCModal();
             }
-        };
+        }
+
+        // Keyboard shortcut to close modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeWVCModal();
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             initializePage();
@@ -816,8 +865,5 @@
             }
         });
     </script>
-    
-    <!-- Google Cast SDK -->
-    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 </body>
 </html>
