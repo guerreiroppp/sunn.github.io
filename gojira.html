@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,7 +58,8 @@
             font-size: 14px;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover,
+        .nav-link.active {
             color: #ffffff;
         }
 
@@ -290,8 +292,13 @@
         }
 
         @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
         }
 
         /* Web Video Caster Modal */
@@ -303,7 +310,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.8);
+            background-color: rgba(0, 0, 0, 0.8);
             animation: fadeIn 0.3s ease;
         }
 
@@ -393,14 +400,20 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         /* Mobile-First Responsive Design */
         @media (max-width: 768px) {
             body {
-                font-size: 16px; /* Better readability on mobile */
+                font-size: 16px;
+                /* Better readability on mobile */
             }
 
             .header {
@@ -410,28 +423,28 @@
             .header-content {
                 padding: 0 15px;
             }
-            
+
             .nav-links {
                 display: none;
             }
-            
+
             .container {
                 padding: 15px 10px;
             }
-            
+
             .anime-header {
                 flex-direction: column;
                 text-align: center;
                 padding: 20px 15px;
                 gap: 20px;
             }
-            
+
             .anime-poster {
                 width: 160px;
                 height: 220px;
                 margin: 0 auto;
             }
-            
+
             .anime-title {
                 font-size: 1.8rem;
                 line-height: 1.3;
@@ -451,7 +464,7 @@
                 font-size: 14px;
                 text-align: left;
             }
-            
+
             .episodes-grid {
                 grid-template-columns: 1fr;
                 gap: 15px;
@@ -460,7 +473,7 @@
             .episode-card {
                 padding: 15px;
             }
-            
+
             .video-header {
                 flex-direction: column;
                 gap: 15px;
@@ -552,8 +565,9 @@
             .anime-header {
                 padding: 15px 10px;
             }
-            
-            .video-container, .episodes-section {
+
+            .video-container,
+            .episodes-section {
                 padding: 15px 10px;
             }
 
@@ -606,6 +620,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Cast Notification -->
     <div id="castNotification" class="cast-notification"></div>
@@ -615,7 +630,7 @@
         <div class="wvc-modal-content">
             <span class="wvc-close" onclick="closeWVCModal()">&times;</span>
             <h2><i class="fas fa-tv"></i> Transmitir para TV</h2>
-            
+
             <div class="device-icons">
                 <div class="device-icon">
                     <i class="fas fa-tv"></i>
@@ -637,21 +652,22 @@
                 <p>2️⃣ Clique no botão abaixo para abrir direto no app</p>
                 <p>3️⃣ O vídeo começará automaticamente na TV! 🎬</p>
             </div>
-            
+
             <a href="#" class="wvc-cast-button" id="wvcLaunchButton" onclick="launchWebVideoCaster()">
                 <i class="fas fa-play"></i>
                 Abrir Web Video Caster
             </a>
-            
+
             <a href="#" class="wvc-cast-button secondary" id="wvcDirectButton" onclick="openDirectCast()">
                 <i class="fas fa-external-link-alt"></i>
                 Abrir Direto no Navegador
             </a>
-            
+
             <div class="wvc-instructions" style="margin-top: 20px; font-size: 12px;">
                 <p><strong>📱 Apps compatíveis na TV:</strong></p>
                 <p>Web Video Caster • AllCast • LocalCast • BubbleUPnP</p>
-                <p style="margin-top: 10px; color: #888;">💡 <strong>Dica:</strong> Mantenha TV e celular na mesma rede WiFi</p>
+                <p style="margin-top: 10px; color: #888;">💡 <strong>Dica:</strong> Mantenha TV e celular na mesma rede
+                    WiFi</p>
             </div>
         </div>
     </div>
@@ -668,7 +684,8 @@
         <!-- Anime Header -->
         <div class="anime-header">
             <div class="anime-poster">
-                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=220&h=300&fit=crop" alt="Naruto Poster">
+                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=220&h=300&fit=crop"
+                    alt="Naruto Poster">
             </div>
             <div class="anime-info">
                 <h1 class="anime-title">Naruto</h1>
@@ -679,7 +696,9 @@
                     <span class="meta-item">Legendado</span>
                 </div>
                 <p class="anime-description">
-                    Naruto Uzumaki é um jovem ninja da Vila da Folha que busca reconhecimento e sonha em se tornar o Hokage, o líder da vila. A série segue suas aventuras enquanto ele treina para se tornar mais forte e proteger seus amigos.
+                    Naruto Uzumaki é um jovem ninja da Vila da Folha que busca reconhecimento e sonha em se tornar o
+                    Hokage, o líder da vila. A série segue suas aventuras enquanto ele treina para se tornar mais forte
+                    e proteger seus amigos.
                 </p>
                 <div class="rating">
                     <div class="stars">
@@ -772,22 +791,14 @@
         // Web Video Caster Integration - Direct App Launch
         function generateWebVideoCasterURL() {
             const episode = animeData.episodes[currentEpisode];
-            
-            // Web Video Caster protocol URL
-            const wvcParams = new URLSearchParams({
-                url: episode.videoUrl,
-                title: episode.title,
-                poster: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop',
-                subtitle: `${animeData.title} - Episódio ${episode.number}`
-            });
-            
-            return `wvc://play?${wvcParams.toString()}`;
+            // Protocolo correto: wvc-x-callback://open?url=AQUI_A_URL
+            return `wvc-x-callback://open?url=${encodeURIComponent(episode.videoUrl)}`;
         }
 
         function generateDirectCastURL() {
             const episode = animeData.episodes[currentEpisode];
             const baseUrl = window.location.origin + window.location.pathname;
-            
+
             // Direct browser casting URL
             const castParams = new URLSearchParams({
                 video: episode.videoUrl,
@@ -796,17 +807,17 @@
                 poster: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop',
                 autoplay: 'true'
             });
-            
+
             return `${baseUrl}?cast=true&${castParams.toString()}`;
         }
 
         function launchWebVideoCaster() {
             const wvcUrl = generateWebVideoCasterURL();
             const directUrl = generateDirectCastURL();
-            
+
             // Try to launch Web Video Caster app first
             window.location.href = wvcUrl;
-            
+
             // Fallback: Open direct URL after a short delay if app doesn't launch
             setTimeout(() => {
                 const userChoice = confirm('📱 Não conseguiu abrir o Web Video Caster?\n\n✅ OK = Abrir no navegador\n❌ Cancelar = Tentar novamente');
@@ -814,7 +825,7 @@
                     window.open(directUrl, '_blank');
                 }
             }, 3000);
-            
+
             showNotification('🚀 Abrindo Web Video Caster...');
             closeWVCModal();
         }
@@ -828,12 +839,12 @@
 
         function openWVCModal() {
             const modal = document.getElementById('wvcModal');
-            
+
             modal.style.display = 'block';
-            
+
             // Prevent body scrolling when modal is open (mobile fix)
             document.body.style.overflow = 'hidden';
-            
+
             showNotification('📺 Escolha como transmitir para sua TV!');
         }
 
@@ -846,13 +857,13 @@
         // Check if page is being loaded for casting
         function checkCastMode() {
             const urlParams = new URLSearchParams(window.location.search);
-            
+
             if (urlParams.get('cast') === 'true') {
                 // This is a cast URL, set up for casting mode
                 const videoUrl = urlParams.get('video');
                 const title = urlParams.get('title');
                 const subtitle = urlParams.get('subtitle');
-                
+
                 if (videoUrl) {
                     document.body.innerHTML = `
                         <div style="background: #000; color: #fff; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;">
@@ -872,13 +883,13 @@
                             </p>
                         </div>
                     `;
-                    
+
                     // Set page title
                     document.title = title || 'Gojira - Reproduzindo Vídeo';
                     return true;
                 }
             }
-            
+
             return false;
         }
 
@@ -887,7 +898,7 @@
             const notification = document.getElementById('castNotification');
             notification.innerHTML = message;
             notification.style.display = 'block';
-            
+
             // Auto-hide after 4 seconds (longer for mobile reading)
             setTimeout(() => {
                 notification.style.display = 'none';
@@ -904,7 +915,7 @@
             if (player) {
                 player.remove();
             }
-            
+
             player = jwplayer("player").setup({
                 file: videoUrl,
                 width: '100%',
@@ -932,11 +943,11 @@
                 }]
             });
 
-            player.on('ready', function() {
+            player.on('ready', function () {
                 // Player ready
             });
 
-            player.on('complete', function() {
+            player.on('complete', function () {
                 // Auto-play next episode
                 if (currentEpisode < animeData.episodes.length - 1) {
                     setTimeout(() => {
@@ -955,7 +966,7 @@
                 const episodeCard = document.createElement('div');
                 episodeCard.className = `episode-card ${index === currentEpisode ? 'active' : ''}`;
                 episodeCard.onclick = () => playEpisode(index);
-                
+
                 episodeCard.innerHTML = `
                     <div class="episode-number">Episódio ${episode.number}</div>
                     <div class="episode-title">${episode.title}</div>
@@ -964,7 +975,7 @@
                         ${episode.duration}
                     </div>
                 `;
-                
+
                 episodesList.appendChild(episodeCard);
             });
         }
@@ -974,22 +985,22 @@
             if (episodeIndex >= 0 && episodeIndex < animeData.episodes.length) {
                 currentEpisode = episodeIndex;
                 const episode = animeData.episodes[episodeIndex];
-                
+
                 // Update current episode title
-                document.getElementById('currentEpisodeTitle').textContent = 
+                document.getElementById('currentEpisodeTitle').textContent =
                     `Episódio ${episode.number} - ${episode.title}`;
-                
+
                 // Update active episode in list
                 document.querySelectorAll('.episode-card').forEach((card, index) => {
                     card.classList.toggle('active', index === episodeIndex);
                 });
-                
+
                 // Initialize player with new episode
                 initPlayer(episode.videoUrl);
-                
+
                 // Scroll to top of video
-                document.querySelector('.video-section').scrollIntoView({ 
-                    behavior: 'smooth' 
+                document.querySelector('.video-section').scrollIntoView({
+                    behavior: 'smooth'
                 });
             }
         }
@@ -1000,20 +1011,20 @@
             if (checkCastMode()) {
                 return; // Stop here if we're in cast mode
             }
-            
+
             generateEpisodesList();
-            
+
             // Wait for JWPlayer to be available
             if (typeof jwplayer === 'undefined') {
                 setTimeout(initializePage, 500);
                 return;
             }
-            
+
             playEpisode(0); // Start with first episode
         }
 
         // Close modal when clicking outside
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('wvcModal');
             if (event.target === modal) {
                 closeWVCModal();
@@ -1021,21 +1032,22 @@
         }
 
         // Keyboard shortcut to close modal
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 closeWVCModal();
             }
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             initializePage();
         });
 
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             if (typeof jwplayer !== 'undefined' && !player) {
                 initializePage();
             }
         });
     </script>
 </body>
+
 </html>
