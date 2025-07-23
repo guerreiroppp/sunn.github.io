@@ -332,43 +332,64 @@
             color: white;
         }
 
-        .wvc-qr {
-            margin: 20px 0;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            display: inline-block;
-        }
-
         .wvc-instructions {
             margin: 20px 0;
             line-height: 1.6;
             color: #cccccc;
         }
 
-        .wvc-url {
-            background: #222222;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            word-break: break-all;
-            font-family: monospace;
-            border: 1px solid #333333;
-        }
-
-        .copy-button {
+        .wvc-cast-button {
             background: #007bff;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 20px 30px;
+            border-radius: 12px;
             cursor: pointer;
-            margin: 10px 5px;
-            transition: background 0.3s ease;
+            margin: 20px 10px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
         }
 
-        .copy-button:hover {
+        .wvc-cast-button:hover {
             background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .wvc-cast-button.secondary {
+            background: #28a745;
+        }
+
+        .wvc-cast-button.secondary:hover {
+            background: #1e7e34;
+        }
+
+        .device-icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .device-icon {
+            text-align: center;
+            color: #cccccc;
+        }
+
+        .device-icon i {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .device-icon span {
+            font-size: 12px;
+            display: block;
         }
 
         @keyframes fadeIn {
@@ -376,8 +397,16 @@
             to { opacity: 1; }
         }
 
-        /* Responsive */
+        /* Mobile-First Responsive Design */
         @media (max-width: 768px) {
+            body {
+                font-size: 16px; /* Better readability on mobile */
+            }
+
+            .header {
+                padding: 12px 0;
+            }
+
             .header-content {
                 padding: 0 15px;
             }
@@ -387,53 +416,192 @@
             }
             
             .container {
-                padding: 20px 15px;
+                padding: 15px 10px;
             }
             
             .anime-header {
                 flex-direction: column;
                 text-align: center;
-                padding: 30px 20px;
+                padding: 20px 15px;
+                gap: 20px;
             }
             
             .anime-poster {
-                width: 180px;
-                height: 250px;
+                width: 160px;
+                height: 220px;
                 margin: 0 auto;
             }
             
             .anime-title {
-                font-size: 2.2rem;
+                font-size: 1.8rem;
+                line-height: 1.3;
+            }
+
+            .anime-meta {
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .meta-item {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .anime-description {
+                font-size: 14px;
+                text-align: left;
             }
             
             .episodes-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .episode-card {
+                padding: 15px;
             }
             
             .video-header {
                 flex-direction: column;
                 gap: 15px;
-                align-items: flex-start;
+                align-items: stretch;
             }
 
+            .current-episode {
+                font-size: 16px;
+                text-align: center;
+            }
+
+            .cast-controls {
+                justify-content: center;
+            }
+
+            .cast-button {
+                width: 100%;
+                justify-content: center;
+                padding: 15px 20px;
+                font-size: 16px;
+                border-radius: 8px;
+            }
+
+            .video-container {
+                padding: 15px;
+            }
+
+            .episodes-section {
+                padding: 20px 15px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            /* Mobile Modal Optimizations */
             .wvc-modal-content {
-                margin: 10% auto;
+                margin: 5% auto;
                 width: 95%;
-                padding: 20px;
+                padding: 20px 15px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .wvc-modal-content h2 {
+                font-size: 1.3rem;
+                margin-bottom: 15px;
+            }
+
+            .wvc-instructions {
+                font-size: 14px;
+                text-align: left;
+            }
+
+            .wvc-cast-button {
+                width: 100%;
+                margin: 10px 0;
+                padding: 18px;
+                font-size: 15px;
+                justify-content: center;
+            }
+
+            .device-icons {
+                gap: 20px;
+                margin: 20px 0;
+            }
+
+            .device-icon i {
+                font-size: 2rem;
+            }
+
+            /* Notification positioning for mobile */
+            .cast-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                text-align: center;
+                font-size: 14px;
+                padding: 12px 15px;
             }
         }
 
         @media (max-width: 480px) {
+            .container {
+                padding: 10px 8px;
+            }
+
             .anime-header {
-                padding: 20px 15px;
+                padding: 15px 10px;
             }
             
             .video-container, .episodes-section {
-                padding: 20px 15px;
+                padding: 15px 10px;
             }
-            
-            .anime-meta {
-                justify-content: center;
+
+            .anime-title {
+                font-size: 1.6rem;
+            }
+
+            .anime-poster {
+                width: 140px;
+                height: 190px;
+            }
+
+            .cast-button {
+                padding: 18px 20px;
+                font-size: 15px;
+            }
+
+            .episode-card {
+                padding: 12px;
+            }
+
+            .episode-number {
+                font-size: 14px;
+            }
+
+            .episode-title {
+                font-size: 13px;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .episode-card {
+                padding: 18px;
+            }
+
+            .episode-card:active {
+                transform: scale(0.98);
+                background: #222222;
+                transition: all 0.1s ease;
+            }
+
+            .cast-button:active {
+                transform: scale(0.98);
+            }
+
+            .copy-button:active {
+                transform: scale(0.98);
             }
         }
     </style>
@@ -447,32 +615,43 @@
         <div class="wvc-modal-content">
             <span class="wvc-close" onclick="closeWVCModal()">&times;</span>
             <h2><i class="fas fa-tv"></i> Transmitir para TV</h2>
+            
+            <div class="device-icons">
+                <div class="device-icon">
+                    <i class="fas fa-tv"></i>
+                    <span>Smart TV</span>
+                </div>
+                <div class="device-icon">
+                    <i class="fab fa-chromecast"></i>
+                    <span>Chromecast</span>
+                </div>
+                <div class="device-icon">
+                    <i class="fas fa-tablet-alt"></i>
+                    <span>Tablet</span>
+                </div>
+            </div>
+
             <div class="wvc-instructions">
-                <p><strong>Como transmitir:</strong></p>
-                <p>1. Instale o app <strong>Web Video Caster</strong> na sua Smart TV ou dispositivo</p>
-                <p>2. Abra o app e escaneie o QR Code abaixo ou acesse a URL</p>
-                <p>3. O vídeo será reproduzido automaticamente na sua TV</p>
+                <p><strong>📱 Como transmitir do celular:</strong></p>
+                <p>1️⃣ Tenha o <strong>Web Video Caster</strong> instalado na sua TV</p>
+                <p>2️⃣ Clique no botão abaixo para abrir direto no app</p>
+                <p>3️⃣ O vídeo começará automaticamente na TV! 🎬</p>
             </div>
             
-            <div class="wvc-qr" id="qrContainer">
-                <!-- QR Code será gerado aqui -->
-            </div>
+            <a href="#" class="wvc-cast-button" id="wvcLaunchButton" onclick="launchWebVideoCaster()">
+                <i class="fas fa-play"></i>
+                Abrir Web Video Caster
+            </a>
             
-            <div class="wvc-url" id="castUrl">
-                <!-- URL será gerada aqui -->
-            </div>
-            
-            <div>
-                <button class="copy-button" onclick="copyToClipboard()">
-                    <i class="fas fa-copy"></i> Copiar URL
-                </button>
-                <button class="copy-button" onclick="openInNewTab()">
-                    <i class="fas fa-external-link-alt"></i> Abrir em Nova Aba
-                </button>
-            </div>
+            <a href="#" class="wvc-cast-button secondary" id="wvcDirectButton" onclick="openDirectCast()">
+                <i class="fas fa-external-link-alt"></i>
+                Abrir Direto no Navegador
+            </a>
             
             <div class="wvc-instructions" style="margin-top: 20px; font-size: 12px;">
-                <p><strong>Apps compatíveis:</strong> Web Video Caster, AllCast, LocalCast, BubbleUPnP</p>
+                <p><strong>📱 Apps compatíveis na TV:</strong></p>
+                <p>Web Video Caster • AllCast • LocalCast • BubbleUPnP</p>
+                <p style="margin-top: 10px; color: #888;">💡 <strong>Dica:</strong> Mantenha TV e celular na mesma rede WiFi</p>
             </div>
         </div>
     </div>
@@ -590,11 +769,26 @@
         let currentEpisode = 0;
 
         // Web Video Caster Integration
-        function generateCastUrl() {
+        // Web Video Caster Integration - Direct App Launch
+        function generateWebVideoCasterURL() {
+            const episode = animeData.episodes[currentEpisode];
+            
+            // Web Video Caster protocol URL
+            const wvcParams = new URLSearchParams({
+                url: episode.videoUrl,
+                title: episode.title,
+                poster: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop',
+                subtitle: `${animeData.title} - Episódio ${episode.number}`
+            });
+            
+            return `wvc://play?${wvcParams.toString()}`;
+        }
+
+        function generateDirectCastURL() {
             const episode = animeData.episodes[currentEpisode];
             const baseUrl = window.location.origin + window.location.pathname;
             
-            // Create a casting URL with video parameters
+            // Direct browser casting URL
             const castParams = new URLSearchParams({
                 video: episode.videoUrl,
                 title: episode.title,
@@ -606,70 +800,47 @@
             return `${baseUrl}?cast=true&${castParams.toString()}`;
         }
 
-        function generateQRCode(text) {
-            // Simple QR code generation using API
-            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
-            return `<img src="${qrApiUrl}" alt="QR Code" style="max-width: 200px;">`;
+        function launchWebVideoCaster() {
+            const wvcUrl = generateWebVideoCasterURL();
+            const directUrl = generateDirectCastURL();
+            
+            // Try to launch Web Video Caster app first
+            window.location.href = wvcUrl;
+            
+            // Fallback: Open direct URL after a short delay if app doesn't launch
+            setTimeout(() => {
+                const userChoice = confirm('📱 Não conseguiu abrir o Web Video Caster?\n\n✅ OK = Abrir no navegador\n❌ Cancelar = Tentar novamente');
+                if (userChoice) {
+                    window.open(directUrl, '_blank');
+                }
+            }, 3000);
+            
+            showNotification('🚀 Abrindo Web Video Caster...');
+            closeWVCModal();
+        }
+
+        function openDirectCast() {
+            const directUrl = generateDirectCastURL();
+            window.open(directUrl, '_blank');
+            showNotification('🔗 Abrindo vídeo para casting no navegador!');
+            closeWVCModal();
         }
 
         function openWVCModal() {
             const modal = document.getElementById('wvcModal');
-            const qrContainer = document.getElementById('qrContainer');
-            const urlContainer = document.getElementById('castUrl');
-            
-            const castUrl = generateCastUrl();
-            
-            qrContainer.innerHTML = generateQRCode(castUrl);
-            urlContainer.textContent = castUrl;
             
             modal.style.display = 'block';
             
-            showNotification('Modal de transmissão aberto! Escaneie o QR Code ou copie a URL.');
+            // Prevent body scrolling when modal is open (mobile fix)
+            document.body.style.overflow = 'hidden';
+            
+            showNotification('📺 Escolha como transmitir para sua TV!');
         }
 
         function closeWVCModal() {
             document.getElementById('wvcModal').style.display = 'none';
-        }
-
-        function copyToClipboard() {
-            const urlText = document.getElementById('castUrl').textContent;
-            
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(urlText).then(() => {
-                    showNotification('URL copiada para a área de transferência!');
-                }).catch(() => {
-                    fallbackCopyTextToClipboard(urlText);
-                });
-            } else {
-                fallbackCopyTextToClipboard(urlText);
-            }
-        }
-
-        function fallbackCopyTextToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.top = "0";
-            textArea.style.left = "0";
-            textArea.style.position = "fixed";
-            
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
-            try {
-                document.execCommand('copy');
-                showNotification('URL copiada para a área de transferência!');
-            } catch (err) {
-                showNotification('Erro ao copiar URL. Selecione e copie manualmente.');
-            }
-            
-            document.body.removeChild(textArea);
-        }
-
-        function openInNewTab() {
-            const castUrl = document.getElementById('castUrl').textContent;
-            window.open(castUrl, '_blank');
-            showNotification('URL aberta em nova aba!');
+            // Re-enable body scrolling
+            document.body.style.overflow = '';
         }
 
         // Check if page is being loaded for casting
@@ -711,15 +882,16 @@
             return false;
         }
 
-        // Show notification
+        // Show notification with mobile-friendly styling
         function showNotification(message) {
             const notification = document.getElementById('castNotification');
-            notification.textContent = message;
+            notification.innerHTML = message;
             notification.style.display = 'block';
             
+            // Auto-hide after 4 seconds (longer for mobile reading)
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 3000);
+            }, 4000);
         }
 
         // Initialize JWPlayer
